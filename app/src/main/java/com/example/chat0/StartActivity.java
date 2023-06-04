@@ -19,13 +19,13 @@ public class StartActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-/*        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+       firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if(firebaseUser != null) {
             Intent intent = new Intent(StartActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
-        }*/
+        }
     }
 
 

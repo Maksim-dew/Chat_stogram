@@ -106,14 +106,15 @@
         android:transcriptMode="alwaysScroll">
     </ListView>
 
-    <EditText
-        android:id="@+id/user_nikname"
+    <TextView
+        android:id="@+id/user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="65dp"
-        android:layout_marginTop="10dp"
-        android:hint="user_nikname"
+        android:layout_marginTop="20dp"
+        android:hint="Name"
         android:textColor="#fff"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
 </RelativeLayout>

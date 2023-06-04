@@ -49,6 +49,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -68,8 +69,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends AppCompatActivity {
 
     CircleImageView profile_image;
-    private TextView user_nikname;
-    // private static int SING_IN_CODE = 1;
+    TextView user_name;
+    DatabaseReference reference;
+    FirebaseUser firebaseUser;
     private RelativeLayout activity_main;
 /*
     public String txt_username;
@@ -92,9 +94,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         displayAllMessages();
-        //txt_username();
     }
-
     /*
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -126,21 +126,40 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 */
-
     private void bdlistener () {
         profile_image = findViewById(R.id.profile_image);
-        user_nikname = (TextView)findViewById(R.id.user_nikname);
+        user_name = (TextView)findViewById(R.id.user_name);
 
-        // FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference("User").child(firebaseUser.getUid());
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                user_name.setText(user.getUsername());
+                Log.d(TAG, "user_name" + user_name.toString());
+                if (user.getImageURL().equals("default")) {
+                    profile_image.setImageResource(R.mipmap.ic_launcher);
+                }else {
+                    Glide.with(MainActivity.this).load(user.getImageURL()).into(profile_image);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+/*        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         String userid = null;
 
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
             userid = extras.getString("key");
-        }
+        }*/
 /*
         db.collection("users")
                 .whereEqualTo("username", true)
@@ -161,20 +180,6 @@ public class MainActivity extends AppCompatActivity {
                 });
 
  */
-/*
-        let docRef = db.collection("cities").document("SF")
-
-        docRef.getDocument { (document, error) in
-            if let document = document, document.exists {
-                let property = document.get('fieldname')
-                print("Document data: \(dataDescription)")
-            } else {
-                print("Document does not exist")
-            }
-        }
-
- */
-
 /*
         assert userid != null;
         db.collection("users").document(userid)
@@ -197,20 +202,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
  */
-
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //bdlistener ();
+        bdlistener ();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#7E9C8D"));
         getSupportActionBar().setTitle("");
-
 
         activity_main = findViewById(R.id.activity_main);
         sendBtn = findViewById(R.id.btnSend);
@@ -242,8 +244,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(viewPagerAdapter);
 
         tabLayout.setupWithViewPager(viewPager);
-
-
 /*
         ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -261,7 +261,6 @@ public class MainActivity extends AppCompatActivity {
 
  */
     }
-
 /*
         //Проверка авторизации пользователя
         if(FirebaseAuth.getInstance().getCurrentUser() == null)
@@ -271,10 +270,7 @@ public class MainActivity extends AppCompatActivity {
             displayAllMessages();
         }
 */
-
-
     private void displayAllMessages() {
-
         /*ListView messages = findViewById(R.id.chat_messages_list);
         FirebaseListOptions.Builder<Message> builder = new FirebaseListOptions.Builder<>();
         builder
@@ -291,14 +287,12 @@ public class MainActivity extends AppCompatActivity {
                         .build();
 
         */
-
         ListView listOfMessages = findViewById(R.id.list_of_messages);
         options = new FirebaseListOptions.Builder<Message>()
                 .setLayout(R.layout.list_item)
                 .setQuery(FirebaseDatabase.getInstance().getReference(), Message.class)
                 .setLifecycleOwner(this)
                 .build();
-
         adapter = new FirebaseListAdapter<Message>(options) {
             @Override
             protected void populateView(@NonNull View v, @NonNull Message model, int position) {
@@ -342,7 +336,6 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         //super.onBackPressed();
     }
-
     /*private void displayAllMessages() {
         ListView listofMessages = findViewById(R.id.list_of_messages);
         adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.list_item, FirebaseDatabase.getInstance().getReference()) {
@@ -360,7 +353,6 @@ public class MainActivity extends AppCompatActivity {
         if (adapter != null) adapter.stopListening();
     }
     */
-
     class ViewPagerAdapter extends FragmentPagerAdapter {
 
         private ArrayList<Fragment> fragments;
