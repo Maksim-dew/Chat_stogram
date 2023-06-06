@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        displayAllMessages();
+        //displayAllMessages();
     }
     private void bdlistener () {
         profile_image = findViewById(R.id.profile_image);
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setBackgroundColor(Color.parseColor("#7E9C8D"));
         getSupportActionBar().setTitle("");
 
-        activity_main = findViewById(R.id.activity_main);
+/*        activity_main = findViewById(R.id.activity_main);
         sendBtn = findViewById(R.id.btnSend);
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                                 .getEmail(), textField.getText().toString()));
                 textField.setText("");
             }
-        });
+        });*/
 
         TabLayout tabLayout = findViewById(R.id. tab_layout);
         ViewPager viewPager = findViewById(R.id. view_pager);
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout.setupWithViewPager(viewPager);
     }
-    private void displayAllMessages() {
+/*    private void displayAllMessages() {
         ListView listOfMessages = findViewById(R.id.list_of_messages);
         options = new FirebaseListOptions.Builder<Message>()
                 .setLayout(R.layout.list_item)
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
         listOfMessages.setAdapter(adapter); //Возможно из-за этого ничего рабоать не будет (Работает)
         adapter.startListening(); // 01.05 вернул, потому что без него не работало
-    }
+    }*/
 
 
     @Override

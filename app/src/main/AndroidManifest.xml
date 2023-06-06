@@ -17,6 +17,9 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
+            android:name=".MessageActivity"
+            android:exported="false" />
+        <activity
             android:name=".RegistrActivity"
             android:exported="false" />
         <activity
