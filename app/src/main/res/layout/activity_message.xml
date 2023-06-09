@@ -89,22 +89,12 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <ListView
-        android:id="@+id/list_of_messages"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/text_layout"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="5dp"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="16dp"
-        android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll">
-    </ListView>
+<androidx.recyclerview.widget.RecyclerView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/recycler_view"
+    android:layout_below="@+id/toolbar"
+    android:layout_above="@+id/btnSend"/>
 
     <TextView
         android:id="@+id/user_name"

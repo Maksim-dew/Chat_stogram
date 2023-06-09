@@ -5,6 +5,8 @@ import static android.content.ContentValues.TAG;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,8 +18,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.chat0.Adapter.MessageAdapter;
+import com.example.chat0.Model.Chat;
 import com.example.chat0.Model.User;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
@@ -31,18 +36,25 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MessageActivity extends AppCompatActivity {
 
     CircleImageView profile_image;
+    EditText textField;
     TextView user_name;
     FirebaseUser fuser;
     DatabaseReference reference;
+    MessageAdapter messageAdapter;
+    List<Chat> mChat;
+    RecyclerView recycler_view;
     Intent intent;
     private RelativeLayout activity_message;
-    FirebaseUser firebaseUser;
-
+    //FirebaseUser firebaseUser;
     private FirebaseListAdapter<Message> adapter;
     private FirebaseListOptions<Message> options;
     private FloatingActionButton sendBtn;
@@ -52,6 +64,8 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+
+        //displayAllMessages();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -65,40 +79,44 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-        bdlistener ();
-        displayAllMessages();
+        recycler_view = findViewById(R.id.recycler_view);
+        recycler_view.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
+        linearLayoutManager.setStackFromEnd(true);
+        recycler_view.setLayoutManager(linearLayoutManager);
 
+        profile_image = findViewById(R.id.profile_image);
+        user_name = (TextView)findViewById(R.id.user_name);
         sendBtn = findViewById(R.id.btnSend);
+        textField = findViewById(R.id.messageFiled);
+
+        intent = getIntent();
+        final String userid = intent.getStringExtra("userid");
+        fuser = FirebaseAuth.getInstance().getCurrentUser();
+
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText textField = findViewById(R.id.messageFiled);
-                if(textField.getText().toString() == "")
+                String msg = textField.getText().toString();
+                if(!msg.equals("")){
+                    sendMessage(fuser.getUid(), userid, msg);
+                } else {
+                    Toast.makeText(MessageActivity.this, "Вы не ввели текст сообщения", Toast.LENGTH_LONG).show();
+                }
+                textField.setText("");
+                /*if(textField.getText().toString() == "")
                     return;
                 FirebaseDatabase.getInstance().getReference()
                         .push()
                         .setValue(new Message(FirebaseAuth.getInstance()
                                 .getCurrentUser()
                                 .getEmail(), textField.getText().toString()));
-                textField.setText("");
+                textField.setText("");*/
             }
         });
 
-    }
-
-    private void bdlistener () {
-        profile_image = findViewById(R.id.profile_image);
-        user_name = (TextView)findViewById(R.id.user_name);
-
-        intent = getIntent();
-        String userid = intent.getStringExtra("userid");
-
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        reference = FirebaseDatabase.getInstance().getReference("User").child(firebaseUser.getUid());
-
-        //reference = FirebaseDatabase.getInstance().getReference("Users").child(userid); // или то или то
-
+        reference = FirebaseDatabase.getInstance().getReference("User").child(userid);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -110,6 +128,7 @@ public class MessageActivity extends AppCompatActivity {
                 }else {
                     Glide.with(MessageActivity.this).load(user.getImageURL()).into(profile_image);
                 }
+                readMesagges(fuser.getUid(), userid, user.getImageURL());
             }
 
             @Override
@@ -117,9 +136,11 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
+
+
     }
 
-    private void displayAllMessages() {
+    /*private void displayAllMessages() {
         ListView listOfMessages = findViewById(R.id.list_of_messages);
         options = new FirebaseListOptions.Builder<Message>()
                 .setLayout(R.layout.list_item)
@@ -144,5 +165,48 @@ public class MessageActivity extends AppCompatActivity {
 
         listOfMessages.setAdapter(adapter); //Возможно из-за этого ничего рабоать не будет (Работает)
         adapter.startListening(); // 01.05 вернул, потому что без него не работало
+    }*/
+
+    private void sendMessage(String sender, String receiver, String message) {
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("sender", sender);
+        hashMap.put("receiver", receiver);
+        hashMap.put("message", message);
+
+        reference.child("Chats").push().setValue(hashMap);
+
     }
+
+    private void readMesagges(String myid, String userid, String imageurl){
+
+        mChat = new ArrayList<>();
+
+        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mChat.clear();
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Chat chat = snapshot.getValue(Chat.class);
+                    if(chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
+                            chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
+                        mChat.add(chat);
+                    }
+                    messageAdapter = new MessageAdapter(MessageActivity.this, mChat, imageurl);
+                    recycler_view.setAdapter(messageAdapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+    }
+
 }

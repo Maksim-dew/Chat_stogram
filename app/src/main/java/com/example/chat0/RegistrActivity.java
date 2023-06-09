@@ -13,26 +13,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.widget.Toolbar;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 
 public class RegistrActivity extends AppCompatActivity {
 
@@ -43,53 +34,7 @@ public class RegistrActivity extends AppCompatActivity {
     private Button button_register;
     private FirebaseAuth mAuth;
     private DatabaseReference reference;
-    /*
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            reload();
-        }
 
-    }
-
-     */
-
-    /*public void getUserProfilegetUserProfile() {
-        // [START get_user_profile]
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // Имя, адрес электронной почты и URL-адрес фотографии профиля
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-            Uri photoUrl = user.getPhotoUrl();
-
-            // Проверьте, подтвержден ли адрес электронной почты пользователя
-            boolean emailVerified = user.isEmailVerified();
-
-            // Идентификатор пользователя, уникальный для проекта Firebase. НЕ используйте это значение для
-            // аутентифицируйтесь на вашем внутреннем сервере, если он у вас есть. Использовать
-            // FirebaseUser.getIdToken() вместо этого.
-            String uid = user.getUidgetUid();
-
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-if (user != null) {
-    for (UserInfo profile : user.getProviderData()) {
-        // Id of the provider (ex: google.com)
-        String providerId = profile.getProviderId();
-
-        // UID specific to the provider
-        String uid = profile.getUid();
-
-        // Name, email address, and profile photo Url
-        String name = profile.getDisplayName();
-        String email = profile.getEmail();
-        Uri photoUrl = profile.getPhotoUrl();
-    }
-}
-        }
-*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,7 +88,6 @@ if (user != null) {
     private void register(String txt_email,String txt_password){
         mAuth.createUserWithEmailAndPassword(txt_email, txt_password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    //Если поля не пустые то происодит считывание из полей и регистрация
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
@@ -154,12 +98,12 @@ if (user != null) {
                             /*Intent intent = new Intent (RegistrActivity.this, MainActivity.class);
                             intent.putExtra("key", userid);
                             startActivity(intent); // Пока не нужно
-
                              */
 
                             reference = FirebaseDatabase.getInstance().getReference("User").child(userid); // эта строка записывает пользователь в realtime firebase
 
-                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            //нах это?
+                            //FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                             HashMap<String, String> hashMap = new HashMap<>();
                             hashMap.put("id", userid);
@@ -179,50 +123,14 @@ if (user != null) {
                                 }
                             });
                         }else {
-                            //Если се плохо, то регистрация не идет
                             Log.w(TAG, "createUserWithEmail:failure", task.getException()); // Это я делаю для себя для записи логов на случай ошибки
                             Toast.makeText(RegistrActivity.this, "Неправильно введен Email или пароль", Toast.LENGTH_LONG).show();
-                            //updateUI(null);
                         }
-
-                            /*
-                            // Я НЕ ПОМНЮ ДЛЯ ЧЕГО ЭТО БЫЛО СДЕЛАНО БЛЯТЬ
-                            db.collection("users").document(userid)
-                                    .set(users)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d(TAG, "DocumentSnapshot successfully written!");
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "Error writing document", e);
-                                        }
-                                    });
-
-                            db.collection("users")
-                                    .add(users)
-                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                        @Override
-                                        public void onSuccess(DocumentReference documentReference) {
-                                            Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                                            Intent intent = new Intent (RegistrActivity.this, MainActivity.class);
-                                            startActivity(intent);
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "Error adding document", e);
-                                            Toast.makeText(RegistrActivity.this, "Неправильно введен Email или пароль", Toast.LENGTH_LONG).show();
-                                        }
-                                    });*/
                     }
                 });
     }
 /*
+    //нах это?
     private void reload() {
         Toast.makeText(RegistrActivity.this, "Вы уже авторизированы", Toast.LENGTH_LONG).show();
     }

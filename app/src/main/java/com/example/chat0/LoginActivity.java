@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.widget.Toolbar;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -35,15 +34,15 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-/*        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        /*
+        // По идее это не нужно потому есть StartActivity
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if(firebaseUser != null) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }*/
-
     }
 
     @Override
@@ -64,7 +63,6 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         register_txt.setOnClickListener(new View.OnClickListener() {
-            //тут происходит обработка нажатия на текст с регистрацией и переход на неё
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, RegistrActivity.class);
@@ -80,10 +78,8 @@ public class LoginActivity extends AppCompatActivity {
                 String txt_password = password_login.getText().toString();
 
                 if (txt_email.isEmpty() || txt_password.isEmpty()){
-                    //Тут происходит проверка на пустоту ввода
                     Toast.makeText(LoginActivity.this, "Заполните поля ввода", Toast.LENGTH_LONG).show();
                 } else {
-                    //Если пользователь ввел коректыне данные происходит вход в приложении и запрос в БД
                     mAuth.signInWithEmailAndPassword(txt_email, txt_password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
@@ -94,7 +90,6 @@ public class LoginActivity extends AppCompatActivity {
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                         startActivity(intent);
                                         finish();
-
                                     }else {
                                         Log.w(TAG, "signInWithEmail:failure", task.getException());
                                         Toast.makeText(LoginActivity.this, "Неправильно введен Email или пароль", Toast.LENGTH_LONG).show();
