@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#7E9C8D"));
-        getSupportActionBar().setTitle("Login");
+        getSupportActionBar().setTitle("");
 
         email_login = findViewById(R.id.email_login);
         password_login = findViewById(R.id.password_login);

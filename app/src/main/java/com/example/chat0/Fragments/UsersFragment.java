@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.example.chat0.Adapter.SpacingItemDecorator;
 import com.example.chat0.Adapter.UserAdapter;
 import com.example.chat0.MainActivity;
 import com.example.chat0.Model.User;
@@ -47,6 +48,8 @@ public class UsersFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        SpacingItemDecorator itemDecorator = new SpacingItemDecorator(10);
+        recyclerView.addItemDecoration(itemDecorator);
 
         mUser = new ArrayList<>();
 

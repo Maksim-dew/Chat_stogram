@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.chat0.Adapter.SpacingItemDecorator;
 import com.example.chat0.Adapter.UserAdapter;
 import com.example.chat0.Model.Chat;
 import com.example.chat0.Model.User;
@@ -44,6 +45,8 @@ public class ChatsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        SpacingItemDecorator itemDecorator = new SpacingItemDecorator(10);
+        recyclerView.addItemDecoration(itemDecorator);
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
 
