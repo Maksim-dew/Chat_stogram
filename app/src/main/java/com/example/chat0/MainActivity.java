@@ -49,6 +49,7 @@ import com.google.firebase.database.ValueEventListener;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -66,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //displayAllMessages();
     }
     private void bdlistener () {
         profile_image = findViewById(R.id.profile_image);
@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
                     Glide.with(MainActivity.this).load(user.getImageURL()).into(profile_image);
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -105,24 +104,6 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setBackgroundColor(Color.parseColor("#7E9C8D"));
         getSupportActionBar().setTitle("");
 
-/*        activity_main = findViewById(R.id.activity_main);
-        sendBtn = findViewById(R.id.btnSend);
-
-        sendBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditText textField = findViewById(R.id.messageFiled);
-                if(textField.getText().toString() == "")
-                    return;
-                FirebaseDatabase.getInstance().getReference()
-                        .push()
-                        .setValue(new Message(FirebaseAuth.getInstance()
-                                .getCurrentUser()
-                                .getEmail(), textField.getText().toString()));
-                textField.setText("");
-            }
-        });*/
-
         TabLayout tabLayout = findViewById(R.id. tab_layout);
         ViewPager viewPager = findViewById(R.id. view_pager);
 
@@ -136,33 +117,6 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout.setupWithViewPager(viewPager);
     }
-/*    private void displayAllMessages() {
-        ListView listOfMessages = findViewById(R.id.list_of_messages);
-        options = new FirebaseListOptions.Builder<Message>()
-                .setLayout(R.layout.list_item)
-                .setQuery(FirebaseDatabase.getInstance().getReference(), Message.class)
-                .setLifecycleOwner(this)
-                .build();
-        adapter = new FirebaseListAdapter<Message>(options) {
-            @Override
-            protected void populateView(@NonNull View v, @NonNull Message model, int position) {
-                TextView mess_user, mess_time;
-                BubbleTextView mess_text;
-                mess_user = v.findViewById(R.id.message_user);
-                mess_time = v.findViewById(R.id.message_time);
-                mess_text = v.findViewById(R.id.message_text);
-
-                mess_user.setText(model.getUserName());
-                mess_text.setText(model.getTextMessage());
-                mess_time.setText(DateFormat.format("dd-mm-yyyy HH:mm:ss", model.getMessageTime()));
-
-            }
-        };
-
-        listOfMessages.setAdapter(adapter); //Возможно из-за этого ничего рабоать не будет (Работает)
-        adapter.startListening(); // 01.05 вернул, потому что без него не работало
-    }*/
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -175,8 +129,8 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                finish();
+                //Вернуть обратно если будет краш
+                startActivity(new Intent(MainActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 return true;
         }
         return false;
@@ -218,5 +172,26 @@ public class MainActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return titles.get(position);
         }
+    }
+
+    private void status(String status){
+        reference = FirebaseDatabase.getInstance().getReference("User").child(firebaseUser.getUid());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+
+        reference.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
     }
 }

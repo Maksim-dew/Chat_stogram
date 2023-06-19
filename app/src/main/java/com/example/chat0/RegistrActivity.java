@@ -110,6 +110,8 @@ public class RegistrActivity extends AppCompatActivity {
                             hashMap.put("imageURL", "default");
                             hashMap.put("username", user_name.getText().toString());
                             hashMap.put("email", email_register.getText().toString());
+                            hashMap.put("status", "offline");
+
 
                             reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
