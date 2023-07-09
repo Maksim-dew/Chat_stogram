@@ -2,6 +2,7 @@ package com.example.chat0.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         } else {
             Glide.with(mContext).load(imageurl).into(holder.profile_image);
         }
+
+        if (position == mChat.size()-1){
+            if(chat.isIsseen()) {
+                holder.txt_seen.setText("Просмотренно");
+                holder.txt_seen.setTextColor(Color.parseColor("#5eafbd"));
+            } else {
+                holder.txt_seen.setText("Доставлено");
+            }
+        } /*else {
+            holder.txt_seen.setText(View.GONE);
+        }*/
     }
 
     @Override
@@ -71,12 +83,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         public TextView show_message;
         public ImageView profile_image;
+        public TextView txt_seen;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             show_message = itemView.findViewById(R.id.show_message);
             profile_image = itemView.findViewById(R.id.profile_image);
+            txt_seen = itemView.findViewById(R.id.txt_seen);
         }
     }
 

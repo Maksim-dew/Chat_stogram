@@ -53,12 +53,11 @@ public class MessageActivity extends AppCompatActivity {
     List<Chat> mChat;
     RecyclerView recycler_view;
     Intent intent;
-    private RelativeLayout activity_message;
-    //FirebaseUser firebaseUser;
+    ValueEventListener seenListener;
+    /*private RelativeLayout activity_message;
     private FirebaseListAdapter<Message> adapter;
-    private FirebaseListOptions<Message> options;
+    private FirebaseListOptions<Message> options;*/
     private FloatingActionButton sendBtn;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +74,6 @@ public class MessageActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Вернуть обратно если будет краш
-                //startActivity(new Intent(MessageActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 finish(); //вернул из-за вылета в сообщениях
             }
         });
@@ -128,7 +125,11 @@ public class MessageActivity extends AppCompatActivity {
                 if (user.getImageURL().equals("default")) {
                     profile_image.setImageResource(R.mipmap.ic_launcher);
                 }else {
-                    Glide.with(MessageActivity.this).load(user.getImageURL()).into(profile_image);
+                    //Меняю это на это
+                    //Glide.with(MessageActivity.this).load(user.getImageURL()).into(profile_image);
+
+                    Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
+
                 }
                 readMesagges(fuser.getUid(), userid, user.getImageURL());
             }
@@ -138,8 +139,7 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
-
-
+        seenMassage (userid);
     }
 
     /*private void displayAllMessages() {
@@ -169,14 +169,37 @@ public class MessageActivity extends AppCompatActivity {
         adapter.startListening(); // 01.05 вернул, потому что без него не работало
     }*/
 
+    private void seenMassage (final String userid) {
+        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        seenListener = reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Chat chat = snapshot.getValue(Chat.class);
+                    if(chat.getReceiver().equals(fuser.getUid()) && chat.getSender().equals(userid)) {
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("isseen", true);
+                        snapshot.getRef().updateChildren(hashMap);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void sendMessage(String sender, String receiver, String message) {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
-        HashMap<String, String> hashMap = new HashMap<>();
+        HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
         hashMap.put("receiver", receiver);
         hashMap.put("message", message);
+        hashMap.put("isseen", false);
 
         reference.child("Chats").push().setValue(hashMap);
 
@@ -226,7 +249,14 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        //reference.removeEventListener(seenListener);
         status("offline");
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        reference.removeEventListener(seenListener);
     }
 
 }
