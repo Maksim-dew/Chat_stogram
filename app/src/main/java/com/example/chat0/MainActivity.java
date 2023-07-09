@@ -130,7 +130,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
                 //Вернуть обратно если будет краш
-                startActivity(new Intent(MainActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                startActivity(new Intent(MainActivity.this, LoginActivity.class)/*.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)*/);
+                finish(); //вернул из-за вылета в сообщениях
+                status("offline");
                 return true;
         }
         return false;
