@@ -26,7 +26,7 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/rounded_corner"
         android:enabled="false"
-        android:hint=" Username"
+        android:hint=" Имя"
         android:gravity="center"
         android:singleLine="false" />
 
@@ -36,7 +36,7 @@
         android:gravity="center"
         android:layout_width="250dp"
         android:layout_height="45dp"
-        android:hint=" Email"
+        android:hint=" Почта"
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/username"
@@ -57,18 +57,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Edit Profile"
+        android:text="Редактировать профиль"
         android:textSize="14dp"
         android:textColor="@color/bluish"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/email" />
+        android:layout_below="@+id/email"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Save"
+        android:text="Сохранить"
+        android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/register_txt"/>
 
