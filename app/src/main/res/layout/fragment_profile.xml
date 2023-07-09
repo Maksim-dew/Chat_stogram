@@ -21,15 +21,19 @@
         android:id="@+id/username"
         android:layout_width="250dp"
         android:layout_height="45dp"
-        android:hint=" Username"
-        android:singleLine="false"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/profile_image"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:background="@drawable/rounded_corner"/>
+        android:background="@drawable/rounded_corner"
+        android:enabled="false"
+        android:hint=" Username"
+        android:gravity="center"
+        android:singleLine="false" />
 
     <EditText
         android:id="@+id/email"
+        android:enabled="false"
+        android:gravity="center"
         android:layout_width="250dp"
         android:layout_height="45dp"
         android:hint=" Email"
@@ -38,7 +42,7 @@
         android:layout_below="@+id/username"
         android:background="@drawable/rounded_corner"/>
 
-    <EditText
+    <!--<EditText
         android:id="@+id/password"
         android:layout_width="250dp"
         android:layout_height="45dp"
@@ -46,7 +50,7 @@
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/email"
-        android:background="@drawable/rounded_corner"/>
+        android:background="@drawable/rounded_corner"/>-->
 
     <TextView
         android:id="@+id/register_txt"
@@ -57,7 +61,7 @@
         android:textSize="14dp"
         android:textColor="@color/bluish"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/password" />
+        android:layout_below="@+id/email" />
 
     <Button
         android:id="@+id/save"

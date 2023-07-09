@@ -111,6 +111,7 @@ public class RegistrActivity extends AppCompatActivity {
                             hashMap.put("username", user_name.getText().toString());
                             hashMap.put("email", email_register.getText().toString());
                             hashMap.put("status", "offline");
+                            hashMap.put("search", user_name.getText().toString().toLowerCase());
 
 
                             reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {

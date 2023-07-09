@@ -70,6 +70,7 @@ public class ProfileFragment extends Fragment {
     private static final int REQUEST_CODE_STORAGE_PERMISSION = 1;
     CircleImageView profile_image;
     EditText username;
+    EditText email;
     DatabaseReference reference;
     FirebaseUser fuser;
     StorageReference storageReference;
@@ -85,9 +86,7 @@ public class ProfileFragment extends Fragment {
 
         profile_image = view.findViewById(R.id.profile_image);
         username = view.findViewById(R.id.username);
-
-
-        //FirebaseStorage storage = FirebaseStorage.getInstance();
+        email = view.findViewById(R.id.email);
 
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
 
@@ -104,6 +103,7 @@ public class ProfileFragment extends Fragment {
                 }else {
                     Glide.with(getContext()).load(user.getImageURL()).into(profile_image);
                 }
+                email.setText(user.getEmail());
             }
 
             @Override
