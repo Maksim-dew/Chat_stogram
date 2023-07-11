@@ -30,7 +30,6 @@ import java.util.List;
 
 
 public class ChatsFragment extends Fragment {
-
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
     private List<User> mUser;
@@ -70,30 +69,6 @@ public class ChatsFragment extends Fragment {
             }
         });
 
-        /*reference = FirebaseDatabase.getInstance().getReference("Chats");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                usersList.clear();
-
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Chat chat = snapshot.getValue(Chat.class);
-                    if (chat.getSender().equals(fuser.getUid())){
-                        usersList.add(chat.getReceiver());
-                    }
-                    if(chat.getReceiver().equals(fuser.getUid())) {
-                        usersList.add(chat.getSender());
-                    }
-                }
-                readChats ();
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });*/
         return view;
     }
 
@@ -122,45 +97,4 @@ public class ChatsFragment extends Fragment {
             }
         });
     }
-
-    /*private void readChats () {
-
-        mUser = new ArrayList<>();
-        reference = FirebaseDatabase.getInstance().getReference("User");
-
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mUser.clear();
-
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    User user = snapshot.getValue(User.class);
-
-                    // отображение 1 пользователя из чатов
-                    //фрагемент из StackOverflow
-                    for (String id : usersList) {
-                        if (user.getId().equals(id)) {
-                            if (mUser.size() != 0 ) {
-                                for (User user1 : new ArrayList< User >(mUser)) {
-                                    if (mUser.stream().noneMatch(u -> user.getId().equals(u.getId()))) {
-                                        mUser.add(user);
-                                    }
-                                }
-                            } else {
-                                mUser.add(user);
-                            }
-                        }
-                    }
-                }
-                userAdapter = new UserAdapter(getContext(), mUser, true);
-                recyclerView.setAdapter(userAdapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-    }*/
 }
