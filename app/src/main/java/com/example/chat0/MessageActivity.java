@@ -191,7 +191,9 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
 
-    private void sendMessage(String sender, String receiver, String message) {
+    private void sendMessage(String sender, final String receiver, String message) { //какая то дроч с userid
+
+        final String userid = intent.getStringExtra("userid"); //какая то пизда
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
@@ -203,6 +205,24 @@ public class MessageActivity extends AppCompatActivity {
 
         reference.child("Chats").push().setValue(hashMap);
 
+
+        //вся эта тема добавляет пользователя во фрагмент чата
+        DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("Chatlist")
+                .child(fuser.getUid())
+                .child(userid); //какая то дроч с userid
+        chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    chatRef.child("id").setValue(userid);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void readMesagges(String myid, String userid, String imageurl){
