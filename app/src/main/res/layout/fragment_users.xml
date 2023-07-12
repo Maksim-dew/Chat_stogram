@@ -7,14 +7,16 @@
     tools:context=".Fragments.UsersFragment">
 
     <EditText
+        android:drawablePadding="5dp"
         android:id="@+id/search_users"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginBottom="5dp"
-        android:hint="Поиск..." />
+        android:hint="Поиск..."
+        android:drawableLeft="@drawable/baseline_search_24"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

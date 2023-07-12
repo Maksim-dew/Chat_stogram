@@ -10,7 +10,7 @@
         android:id="@+id/btn_login"
         android:layout_width="350dp"
         android:layout_height="55dp"
-        android:text="login"
+        android:text="Войти"
         app:layout_constraintBottom_toTopOf="@+id/btn_register"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,9 +21,19 @@
         android:id="@+id/btn_register"
         android:layout_width="350dp"
         android:layout_height="55dp"
-        android:text="Register"
+        android:text="Зарегистрироваться"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_login" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_login"
+        android:layout_marginBottom="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/baseline_mark_as_unread_24"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

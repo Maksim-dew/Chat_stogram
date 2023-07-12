@@ -23,13 +23,15 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
+        android:padding="5dp"
+        android:drawablePadding="5dp"
         android:id="@+id/user_name"
         android:layout_width="250dp"
         android:layout_height="45dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"
-        android:hint=" Имя"
-        android:singleLine="false"
+        android:layout_marginBottom="10dp"
+        android:hint="Имя"
+        android:drawableLeft="@drawable/baseline_person_24"
+        android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@+id/email_register"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,11 +39,15 @@
         android:background="@drawable/rounded_corner"/>
 
     <EditText
+        android:padding="5dp"
+        android:drawablePadding="5dp"
         android:id="@+id/email_register"
         android:layout_width="250dp"
         android:layout_height="45dp"
-        android:layout_marginBottom="20dp"
-        android:hint=" Почта"
+        android:layout_marginBottom="10dp"
+        android:hint="Почта"
+        android:singleLine="true"
+        android:drawableLeft="@drawable/baseline_markunread_24"
         app:layout_constraintBottom_toTopOf="@+id/password_register"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,11 +55,15 @@
         android:background="@drawable/rounded_corner"/>
 
     <EditText
+        android:padding="5dp"
+        android:drawablePadding="5dp"
         android:id="@+id/password_register"
         android:layout_width="250dp"
         android:layout_height="45dp"
-        android:layout_marginBottom="20dp"
-        android:hint=" Пароль"
+        android:layout_marginBottom="10dp"
+        android:hint="Пароль"
+        android:singleLine="true"
+        android:drawableLeft="@drawable/baseline_password_24"
         app:layout_constraintBottom_toTopOf="@+id/button_register"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,5 +80,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password_register" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toTopOf="@+id/email_register"
+        android:layout_marginBottom="150dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/baseline_mark_as_unread_24"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
