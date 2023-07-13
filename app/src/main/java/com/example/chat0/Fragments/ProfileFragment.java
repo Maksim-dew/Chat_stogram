@@ -9,6 +9,8 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -17,6 +19,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 
@@ -28,12 +31,16 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import com.example.chat0.LoginActivity;
 import com.example.chat0.Model.User;
 import com.example.chat0.R;
+import com.example.chat0.RegistrActivity;
+import com.example.chat0.ResetPasswordActivity;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -71,8 +78,12 @@ public class ProfileFragment extends Fragment {
     CircleImageView profile_image;
     EditText username;
     EditText email;
+    TextView edit_txt;
+    Button btn_save;
+    TextView edit_pass;
     DatabaseReference reference;
     FirebaseUser fuser;
+    private FirebaseAuth mAuth;
     StorageReference storageReference;
     private static final int IMAGE_REQUEST = 1;
     private Uri imageUri;
@@ -87,6 +98,10 @@ public class ProfileFragment extends Fragment {
         profile_image = view.findViewById(R.id.profile_image);
         username = view.findViewById(R.id.username);
         email = view.findViewById(R.id.email);
+        edit_txt = view.findViewById(R.id.edit_txt);
+        btn_save = view.findViewById(R.id.btn_save);
+        edit_pass = view.findViewById(R.id.edit_pass);
+
 
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
 
@@ -118,9 +133,57 @@ public class ProfileFragment extends Fragment {
                 openImage();
             }
         });
+
+        edit_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                username.setEnabled(true);
+                email.setEnabled(true);
+            }
+        });
+
+        btn_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editData ();
+            }
+        });
+
+        edit_pass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), ResetPasswordActivity.class));
+            }
+        });
+
         return view ;
     }
 
+    private void  editData () {
+
+        /*FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        userid = firebaseUser.getUid();*/
+
+        reference = FirebaseDatabase.getInstance().getReference("User").child(fuser.getUid());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("username", username.getText().toString());
+        hashMap.put("email", email.getText().toString());
+        hashMap.put("search", username.getText().toString().toLowerCase());
+
+        reference.updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    username.setEnabled(false);
+                    email.setEnabled(false);
+                    Toast.makeText(getContext(), "Данные сохранены!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+    }
     private void openImage() {
 
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);

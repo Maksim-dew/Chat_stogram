@@ -102,9 +102,6 @@ public class RegistrActivity extends AppCompatActivity {
 
                             reference = FirebaseDatabase.getInstance().getReference("User").child(userid); // эта строка записывает пользователь в realtime firebase
 
-                            //нах это?
-                            //FirebaseFirestore db = FirebaseFirestore.getInstance();
-
                             HashMap<String, String> hashMap = new HashMap<>();
                             hashMap.put("id", userid);
                             hashMap.put("imageURL", "default");
