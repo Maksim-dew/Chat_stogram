@@ -34,45 +34,43 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
     </androidx.viewpager.widget.ViewPager>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnSend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="20sp"
-        android:layout_marginTop="20sp"
-        android:layout_marginEnd="20sp"
-        android:layout_marginBottom="10sp"
-        android:clickable="true"
-        android:contentDescription=" "
-        android:src="@drawable/ic_sendbutton"
-        app:fabSize="normal" />
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10sp"
-        android:layout_marginLeft="20sp"
-        android:layout_toLeftOf="@id/btnSend">
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            android:id="@+id/linLay"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="#E1E1E1">
 
         <EditText
             android:id="@+id/messageFiled"
+            android:background="@drawable/rd_corner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:hint="Введите сообщение..."/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/tab_layout"
-            android:contentDescription="Введите сообщение..."
+            android:hint="Cообщение" />
 
-            android:labelFor="@+id/messageFiled"
-            android:visibility="gone" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnSend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10sp"
+                android:clickable="true"
+                android:src="@drawable/ic_sendbutton"
+                app:fabSize="normal"
+                android:elevation="0dp"
+                app:elevation="0dp"/>
+        </LinearLayout>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -81,7 +79,7 @@
     android:layout_height="match_parent"
     android:id="@+id/recycler_view"
     android:layout_below="@+id/toolbar"
-    android:layout_above="@+id/btnSend"/>
+    android:layout_marginBottom="80dp"/>
 
     <TextView
         android:id="@+id/user_name"
