@@ -9,13 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,11 +26,11 @@ import com.bumptech.glide.Glide;
 import com.example.chat0.Fragments.ChatsFragment;
 import com.example.chat0.Fragments.ProfileFragment;
 import com.example.chat0.Fragments.UsersFragment;
+import com.example.chat0.Model.Message;
 import com.example.chat0.Model.User;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
-import com.github.library.bubbleview.BubbleTextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 

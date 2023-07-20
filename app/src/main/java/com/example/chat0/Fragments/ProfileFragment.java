@@ -160,10 +160,6 @@ public class ProfileFragment extends Fragment {
     }
 
     private void  editData () {
-
-        /*FirebaseUser firebaseUser = mAuth.getCurrentUser();
-        userid = firebaseUser.getUid();*/
-
         reference = FirebaseDatabase.getInstance().getReference("User").child(fuser.getUid());
 
         HashMap<String, Object> hashMap = new HashMap<>();

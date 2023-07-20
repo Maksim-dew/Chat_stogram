@@ -14,15 +14,19 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.chat0.Adapter.MessageAdapter;
+import com.example.chat0.Adapter.SpacingItemDecorator;
 import com.example.chat0.Model.Chat;
+import com.example.chat0.Model.Chatlist;
 import com.example.chat0.Model.User;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
@@ -59,12 +63,12 @@ public class MessageActivity extends AppCompatActivity {
     private FirebaseListOptions<Message> options;*/
     private FloatingActionButton sendBtn;
 
+    String[] countries = { "Бразилия", "Аргентина", "Колумбия", "Чили", "Уругвай"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
-
-        //displayAllMessages();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -93,25 +97,24 @@ public class MessageActivity extends AppCompatActivity {
         final String userid = intent.getStringExtra("userid");
         fuser = FirebaseAuth.getInstance().getCurrentUser();
 
-
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String msg = textField.getText().toString();
                 if(!msg.equals("")){
                     sendMessage(fuser.getUid(), userid, msg);
+                    /*if(key != null) {
+                        Toast.makeText(view.getContext(), "Ура ключ скопирован" + key, Toast.LENGTH_SHORT).show();
+                    }*/
+                    String key = reference.push().getKey();
+                    if(key != null) {
+                        Toast.makeText(view.getContext(), "Ура ключ скопирован" + key, Toast.LENGTH_SHORT).show();
+                    }
+
                 } else {
                     Toast.makeText(MessageActivity.this, "Вы не ввели текст сообщения", Toast.LENGTH_LONG).show();
                 }
                 textField.setText("");
-                /*if(textField.getText().toString() == "")
-                    return;
-                FirebaseDatabase.getInstance().getReference()
-                        .push()
-                        .setValue(new Message(FirebaseAuth.getInstance()
-                                .getCurrentUser()
-                                .getEmail(), textField.getText().toString()));
-                textField.setText("");*/
             }
         });
 
@@ -127,7 +130,6 @@ public class MessageActivity extends AppCompatActivity {
                 }else {
                     //Меняю это на это
                     //Glide.with(MessageActivity.this).load(user.getImageURL()).into(profile_image);
-
                     Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
 
                 }
@@ -136,40 +138,12 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
-        seenMassage (userid);
+        seenMessage (userid);
     }
 
-    /*private void displayAllMessages() {
-        ListView listOfMessages = findViewById(R.id.list_of_messages);
-        options = new FirebaseListOptions.Builder<Message>()
-                .setLayout(R.layout.list_item)
-                .setQuery(FirebaseDatabase.getInstance().getReference(), Message.class)
-                .setLifecycleOwner(this)
-                .build();
-        adapter = new FirebaseListAdapter<Message>(options) {
-            @Override
-            protected void populateView(@NonNull View v, @NonNull Message model, int position) {
-                TextView mess_user, mess_time;
-                BubbleTextView mess_text;
-                mess_user = v.findViewById(R.id.message_user);
-                mess_time = v.findViewById(R.id.message_time);
-                mess_text = v.findViewById(R.id.message_text);
-
-                mess_user.setText(model.getUserName());
-                mess_text.setText(model.getTextMessage());
-                mess_time.setText(DateFormat.format("dd-mm-yyyy HH:mm:ss", model.getMessageTime()));
-
-            }
-        };
-
-        listOfMessages.setAdapter(adapter); //Возможно из-за этого ничего рабоать не будет (Работает)
-        adapter.startListening(); // 01.05 вернул, потому что без него не работало
-    }*/
-
-    private void seenMassage (final String userid) {
+    private void seenMessage (final String userid) {
         reference = FirebaseDatabase.getInstance().getReference("Chats");
         seenListener = reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -183,19 +157,16 @@ public class MessageActivity extends AppCompatActivity {
                     }
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
-
     private void sendMessage(String sender, final String receiver, String message) { //какая то дроч с userid
 
         final String userid = intent.getStringExtra("userid"); //какая то пизда
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        reference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
@@ -203,8 +174,15 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("message", message);
         hashMap.put("isseen", false);
 
+        //код Саши
+        /*String MessageID = reference.child("Chats").push().getKey();
+        reference.child("Chats").setValue(hashMap);*/
+
+        //то что было раньше
         reference.child("Chats").push().setValue(hashMap);
 
+        /*String key = reference.push().getKey();
+        Log.d("Post Key" , reference.getKey());*/
 
         //вся эта тема добавляет пользователя во фрагмент чата
         DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("Chatlist")
