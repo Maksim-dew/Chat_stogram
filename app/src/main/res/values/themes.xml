@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.Chat0" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/pastel_green</item>
-        <item name="colorPrimaryVariant">@color/feldgrau</item>
+        <item name="colorPrimary">@color/moderately_blue</item>
+        <item name="colorPrimaryVariant">@color/moderately_blue</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/tumbleweed_color</item>

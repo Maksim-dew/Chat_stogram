@@ -5,7 +5,7 @@
     android:id="@+id/activity_message"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/creamy_white"
+    android:background="@color/Linen"
     tools:context=".MessageActivity">
 
     <androidx.appcompat.widget.Toolbar

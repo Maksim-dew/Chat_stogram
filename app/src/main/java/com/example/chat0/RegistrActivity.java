@@ -42,7 +42,7 @@ public class RegistrActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setBackgroundColor(Color.parseColor("#7E9C8D"));
+        toolbar.setBackgroundColor(Color.parseColor("#C1D2E2"));
         getSupportActionBar().setTitle("");
 
 

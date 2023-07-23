@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:background="@color/feldgrau"
+        android:background="@color/moderately_blue"
         app:tabIndicatorColor="#fff"
         app:tabSelectedTextColor="#fff"
         app:tabTextColor="#fff" />
