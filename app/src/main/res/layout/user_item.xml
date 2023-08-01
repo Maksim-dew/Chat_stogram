@@ -57,10 +57,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/username"
-        android:layout_toRightOf="@+id/profile_image"
+        android:layout_toRightOf="@+id/user"
         android:layout_marginTop="5dp"
         android:paddingTop="5dp"
         android:id="@+id/last_mgs"
+        android:textColor="@color/bluish"
+        android:layout_marginLeft="5dp"
+        android:maxLines="1"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/username"
+        android:layout_toRightOf="@+id/profile_image"
+        android:layout_marginTop="5dp"
+        android:paddingTop="5dp"
+        android:id="@+id/user"
         android:textColor="@color/bluish"
         android:layout_marginLeft="10dp"
         android:maxLines="1"/>

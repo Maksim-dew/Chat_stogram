@@ -46,6 +46,13 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import android.util.Base64;
+
 public class MessageActivity extends AppCompatActivity {
 
     CircleImageView profile_image;
@@ -58,12 +65,7 @@ public class MessageActivity extends AppCompatActivity {
     RecyclerView recycler_view;
     Intent intent;
     ValueEventListener seenListener;
-    /*private RelativeLayout activity_message;
-    private FirebaseListAdapter<Message> adapter;
-    private FirebaseListOptions<Message> options;*/
     private FloatingActionButton sendBtn;
-
-    String[] countries = { "Бразилия", "Аргентина", "Колумбия", "Чили", "Уругвай"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,15 +103,15 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String msg = textField.getText().toString();
-                if(!msg.equals("")){
+                if(!msg.equals(" ")){
                     sendMessage(fuser.getUid(), userid, msg);
                     /*if(key != null) {
                         Toast.makeText(view.getContext(), "Ура ключ скопирован" + key, Toast.LENGTH_SHORT).show();
-                    }*/
+                    }
                     String key = reference.push().getKey();
                     if(key != null) {
                         Toast.makeText(view.getContext(), "Ура ключ скопирован" + key, Toast.LENGTH_SHORT).show();
-                    }
+                    }*/
 
                 } else {
                     Toast.makeText(MessageActivity.this, "Вы не ввели текст сообщения", Toast.LENGTH_LONG).show();
@@ -162,16 +164,59 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    private String encrypt(String message, String secretKey) {
+        try {
+            SecretKeySpec secretKeySpec = generateKey(secretKey);
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+            byte[] encryptedBytes = cipher.doFinal(message.getBytes());
+            return Base64.encodeToString(encryptedBytes, Base64.DEFAULT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    private String decrypt(String encryptedMessage, String secretKey) {
+        try {
+            SecretKeySpec secretKeySpec = generateKey(secretKey);
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+            byte[] decodedBytes = Base64.decode(encryptedMessage, Base64.DEFAULT);
+            byte[] decryptedBytes = cipher.doFinal(decodedBytes);
+            return new String(decryptedBytes, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private SecretKeySpec generateKey(String secretKey) throws NoSuchAlgorithmException {
+        final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] bytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        digest.update(bytes, 0, bytes.length);
+        byte[] key = digest.digest();
+        return new SecretKeySpec(key, "AES");
+    }
+
     private void sendMessage(String sender, final String receiver, String message) { //какая то дроч с userid
 
         final String userid = intent.getStringExtra("userid"); //какая то пизда
+        String MessageID = reference.child("Chats").push().getKey();
 
         reference = FirebaseDatabase.getInstance().getReference();
 
+        String secretKey = "8-+@83&Ox";
+        String encryptedMessage = encrypt(message, secretKey);
+
         HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("id", MessageID);
         hashMap.put("sender", sender);
         hashMap.put("receiver", receiver);
-        hashMap.put("message", message);
+        hashMap.put("message", encryptedMessage);
         hashMap.put("isseen", false);
 
         //код Саши
@@ -203,8 +248,7 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
 
-    private void readMesagges(String myid, String userid, String imageurl){
-
+    private void readMesagges(String myid, String userid, String imageurl) {
         mChat = new ArrayList<>();
 
         reference = FirebaseDatabase.getInstance().getReference("Chats");
@@ -212,15 +256,18 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mChat.clear();
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chat chat = snapshot.getValue(Chat.class);
-                    if(chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
-                            chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
+                    if (chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
+                            chat.getReceiver().equals(userid) && chat.getSender().equals(myid)) {
+                        String secretKey = "8-+@83&Ox";
+                        String decryptedMessage = decrypt(chat.getMessage(), secretKey);
+                        chat.setMessage(decryptedMessage);
                         mChat.add(chat);
                     }
-                    messageAdapter = new MessageAdapter(MessageActivity.this, mChat, imageurl);
-                    recycler_view.setAdapter(messageAdapter);
                 }
+                messageAdapter = new MessageAdapter(MessageActivity.this, mChat, imageurl);
+                recycler_view.setAdapter(messageAdapter);
             }
 
             @Override

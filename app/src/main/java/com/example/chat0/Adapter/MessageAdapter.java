@@ -52,6 +52,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     ClipboardManager clipboardManager;
     DatabaseReference reference;
     FirebaseUser fuser;
+    String userid;
 
     public MessageAdapter (Context mContext, List<Chat> mChat, String imageurl){
         this.mChat = mChat;
@@ -101,42 +102,32 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             @Override
             public void onClick(View view) {
 
+                final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                 reference = FirebaseDatabase.getInstance().getReference().child("Chats");
-                /*String key = reference.push().getKey();
-                if(key != null) {
-                    Toast.makeText(view.getContext(), "Ура ключ скопирован" + key, Toast.LENGTH_SHORT).show();
-                }
-*/
-                /*reference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                Intent intent = new Intent(mContext, MessageActivity.class);
+                intent.putExtra("userid", chat.getId());
+
+                reference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot Snapshot: dataSnapshot.getChildren()) {
-                            Object obj = Snapshot.getKey();
-                            Toast.makeText(view.getContext(), "Ура ебать" + obj, Toast.LENGTH_SHORT).show();
+                        for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                            Chat chat = snapshot.getValue(Chat.class);
+                            if(chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid) ||
+                                    chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
+                                String obj = snapshot.getKey();
+                                Toast.makeText(view.getContext(), "Ура ебать" + obj, Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                     @Override
                     public void onCancelled(DatabaseError firebaseError) {
                         Log.e("Read failed", firebaseError.getMessage());
                         Toast.makeText(view.getContext(), "Пизда ебаная", Toast.LENGTH_SHORT).show();
+                    /*Object obj = Snapshot.getKey();
+                    Toast.makeText(view.getContext(), "Ура" + obj, Toast.LENGTH_SHORT).show();*/
                     }
-                });*/
-
-                /*reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot child: dataSnapshot.getChildren()){
-                            String key = child.getKey();
-                            Log.e("Key", key);
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });*/
+                });
 
                 /*Chat chats = mChat.get(position);
                 holder.show_message.setText(chat.getMessage());*/
@@ -151,7 +142,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                         switch (item1.getItemId()) {
                             case R.id.copy:
                                 String text = holder.show_message.getText().toString();
-                                if(!text.equals("")){
+                                if (!text.equals("")) {
                                     ClipData clipData = ClipData.newPlainText("text", text);
                                     clipboardManager.setPrimaryClip(clipData);
                                     /*Toast.makeText(view.getContext(), "Coped", Toast.LENGTH_SHORT).show();*/
@@ -179,7 +170,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                             case R.id.delet:
 
                                 *//*reference = FirebaseDatabase.getInstance().getReference("Chats");*//*
-                                *//*reference.child();*//*
+                             *//*reference.child();*//*
                                 reference.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -204,9 +195,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                         }
                     }
                 });
-                //displaying the popup
                 popup.show();
 
+            }
+
+        });
+
+        holder.show_message.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                return false;
             }
         });
     }

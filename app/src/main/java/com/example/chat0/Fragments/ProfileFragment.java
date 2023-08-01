@@ -185,11 +185,6 @@ public class ProfileFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         someActivityResultLauncher.launch(intent);
 
-        /*Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-        someActivityResultLauncher.launch(intent);*/
     }
 
     private String getFileExtension (Uri uri) {
@@ -249,24 +244,9 @@ public class ProfileFragment extends Fragment {
                 }
             });
         } else {
-            Toast.makeText(getContext(), "Изображение не выбрано000", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Изображение не выбрано", Toast.LENGTH_SHORT).show();
         }
     }
-
-    /*public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode == IMAGE_REQUEST && requestCode == RESULT_OK
-        && data != null && data.getData() != null){
-            imageUri = data.getData();
-
-            if(uploadTask != null && uploadTask.isInProgress()){
-                Toast.makeText(getContext(), "Выполняется загрузка", Toast.LENGTH_SHORT).show();
-            } else
-                uploadImage();
-        }
-    }*/
-
 
    ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),

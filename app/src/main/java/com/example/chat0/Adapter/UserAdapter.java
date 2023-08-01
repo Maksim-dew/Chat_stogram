@@ -4,6 +4,7 @@ import static android.content.ContentValues.TAG;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
@@ -37,6 +44,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private final List <User> mUser;
     private boolean ischat;
     String theLastMessage;
+
+    String receiver;
+    String sender;
 
     public UserAdapter (Context mContext, List<User> mUser, boolean ischat){
         this.mUser = mUser;
@@ -63,9 +73,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         }
 
         if(ischat) {
-            lastMessage(user.getId(), holder.last_mgs);
+            lastMessage(user.getId(), holder.last_mgs, holder.user);
         } else {
             holder.last_mgs.setVisibility(View.GONE);
+            holder.user.setVisibility(View.GONE);
         }
 
         if(ischat) {
@@ -104,6 +115,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         public ImageView img_on;
         public ImageView img_off;
         public TextView last_mgs;
+        public TextView user;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -113,10 +125,48 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             img_on = itemView.findViewById(R.id.img_on);
             img_off = itemView.findViewById(R.id.img_off);
             last_mgs = itemView.findViewById(R.id.last_mgs);
+            user = itemView.findViewById(R.id.user);
         }
     }
 
-    private void lastMessage (String userid, TextView last_msg) {
+    private String encrypt(String message, String secretKey) {
+        try {
+            SecretKeySpec secretKeySpec = generateKey(secretKey);
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+            byte[] encryptedBytes = cipher.doFinal(message.getBytes());
+            return Base64.encodeToString(encryptedBytes, Base64.DEFAULT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    private String decrypt(String encryptedMessage, String secretKey) {
+        try {
+            SecretKeySpec secretKeySpec = generateKey(secretKey);
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+            byte[] decodedBytes = Base64.decode(encryptedMessage, Base64.DEFAULT);
+            byte[] decryptedBytes = cipher.doFinal(decodedBytes);
+            return new String(decryptedBytes, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private SecretKeySpec generateKey(String secretKey) throws NoSuchAlgorithmException {
+        final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] bytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        digest.update(bytes, 0, bytes.length);
+        byte[] key = digest.digest();
+        return new SecretKeySpec(key, "AES");
+    }
+
+    private void lastMessage (String userid, TextView last_msg, TextView user) {
+
         theLastMessage = "default";
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
@@ -128,19 +178,66 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                     Chat chat = snapshot.getValue(Chat.class);
                     if(chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid) ||
                     chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
-                        theLastMessage = chat.getMessage();
+                        String secretKey = "8-+@83&Ox"; // Use the same secret key used for encryption
+                        String decryptedMessage = decrypt(chat.getMessage(), secretKey);
+                        theLastMessage = decryptedMessage;
+                        if(theLastMessage != null) {
+                            last_msg.setText(theLastMessage);
+                        } else{
+                            last_msg.setText("Нет сообщений");
+                        }
+                        receiver = chat.getReceiver();
+                        sender = chat.getSender();
+
+                        /*DatabaseReference userSen = FirebaseDatabase.getInstance().getReference("User").child(chat.getReceiver());
+                        userSen.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot userSnapshot) {
+                                User senderUser = userSnapshot.getValue(User.class);
+                                if (senderUser != null) {
+                                    user.setText(senderUser.getUsername()); // Set the username of the sender
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e(TAG, "Failed to read user data", error.toException());
+                            }
+                        });*/
+
+                        DatabaseReference userRec = FirebaseDatabase.getInstance().getReference("User").child(chat.getSender());
+                        userRec.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot userSnapshot) {
+                                User senderUser = userSnapshot.getValue(User.class);
+                                if (senderUser != null) {
+                                    user.setText(senderUser.getUsername() + ":"); // Set the username of the sender
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e(TAG, "Failed to read user data", error.toException());
+                            }
+                        });
                     }
                 }
-                switch (theLastMessage) {
+                /*switch (theLastMessage) {
                     case "default" :
                         last_msg.setText("Нет сообщений");
                         break;
 
                     default:
                         last_msg.setText(theLastMessage);
+                        *//*if(theLastMessage == receiver) {
+                            user.setText(receiver);
+                        } else  {
+                            user.setText(sender);
+                        }*//*
                         break;
-                }
-                theLastMessage = "default";
+                }*/
+                //theLastMessage = "default";
+
             }
 
             @Override
